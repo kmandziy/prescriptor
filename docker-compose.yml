@@ -1,0 +1,86 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prescriptor_web
+    ports:
+      - "3001:3000"
+    volumes:
+      - .:/prescriptor-app:delegated
+    command: /prescriptor-app/entrypoint.sh
+    environment:
+      RAILS_ENV: ${RAILS_ENV:-development}
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-prescriptor_app_development}
+      DATABASE_URL: postgres://postgres:password@db:5432/prescriptor_app_development
+    stdin_open: true
+    tty: true
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - prescriptor_network
+    restart: unless-stopped
+
+  runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prescriptor_runner
+    volumes:
+      - .:/prescriptor-app:delegated
+      - bundle_cache:/usr/local/bundle
+      - tmp_data:/prescriptor-app/tmp
+    environment:
+      RAILS_ENV: ${RAILS_ENV:-development}
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-prescriptor_app_development}
+      DATABASE_URL: postgres://postgres:password@db:5432/prescriptor_app_development
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: ["bundle", "exec"]
+    networks:
+      - prescriptor_network
+    profiles:
+      - runner
+    restart: unless-stopped
+
+  db:
+    image: postgres:14-alpine
+    container_name: prescriptor_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-prescriptor_app_development}
+    ports:
+      - "5432:5432"
+    networks:
+      - prescriptor_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    name: prescriptor_postgres_data
+  bundle_cache:
+    name: prescriptor_bundle_cache
+  tmp_data:
+    name: prescriptor_tmp_data
+  app:
+    driver: local
+
+networks:
+  prescriptor_network:
+    name: prescriptor_network

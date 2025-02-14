@@ -1,0 +1,78 @@
+version: "3"
+
+environment:
+  RAILS_ENV: development
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: password
+  POSTGRES_DB: prescriptor_app_development
+  DATABASE_URL: postgres://postgres:password@db:5432/prescriptor_app_development
+
+compose:
+  files:
+    - docker-compose.yml
+  project_name: prescriptor
+
+interaction:
+  runner:
+    description: Open a Bash shell within a new runner container
+    service: runner
+    command: bash
+    compose:
+      run_options: [no-deps]
+
+  bash:
+    description: Open a Bash shell within a new runner container
+    service: runner
+    command: bash
+    compose:
+      run_options: [no-deps]
+
+  bundle:
+    description: Run Bundler commands
+    service: runner
+    command: bundle
+    compose:
+      run_options: [no-deps]
+
+  rake:
+    description: Run Rake commands
+    service: runner
+    command: bundle exec rake
+    compose:
+      run_options: [no-deps]
+
+  rails:
+    description: Run Rails commands
+    service: runner
+    command: bundle exec rails
+    compose:
+      run_options: [no-deps]
+
+  rspec:
+    description: Run RSpec commands
+    service: runner
+    command: bundle exec rspec
+    compose:
+      run_options: [no-deps]
+
+  rubocop:
+    description: Run Rubocop
+    service: runner
+    command: bundle exec rubocop
+    compose:
+      run_options: [no-deps]
+
+  psql:
+    description: Run PostgreSQL console
+    service: db
+    command: psql -h db -U postgres
+
+  compose:
+    description: Run docker compose commands
+    command: docker compose
+
+provision:
+  - dip compose up -d db
+  - dip bundle install
+  - dip rails db:setup
+  

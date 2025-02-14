@@ -1,0 +1,83 @@
+# Ignore bundler config and downloaded gems
+/.bundle
+/vendor/bundle
+
+# Ignore all logfiles and tempfiles
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore uploaded files in development
+/storage/*
+!/storage/.keep
+
+# Ignore master key for decrypting credentials
+/config/master.key
+
+# Ignore environment variables
+.env
+.env.*
+
+# Ignore test coverage
+/coverage/*
+
+# Ignore public uploads
+/public/uploads
+/public/assets
+
+# Ignore node modules and yarn files
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
+# Ignore precompiled assets
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
+# Ignore Ruby version file
+.ruby-version
+.ruby-gemset
+
+# Ignore IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Ignore OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Ignore Spring files
+/spring/*.pid
+
+# Ignore Redis dump file
+dump.rdb
+
+# Ignore test files
+/test/reports
+/spec/reports
+
+# Ignore local SSL certificates
+/config/certs
+
+# Ignore compiled assets
+/public/assets
+
+# Ignore database backups
+/db/backups
+
+# Ignore system testing screenshots
+/tmp/screenshots/
