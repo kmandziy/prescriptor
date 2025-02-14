@@ -1,24 +1,21 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a Rails application for managing medications and dosages.
 
-Things you may want to cover:
 
-* Ruby version
 
-* System dependencies
+## Setup
 
-* Configuration
+1. Clone the repository
 
-* Database creation
+2. Build the docker image
+docker-compose build
 
-* Database initialization
+3. Run the docker container
+docker-compose up
 
-* How to run the test suite
+4. Run the migrations
+docker-compose exec app rails db:migrate
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+5. Open the application
+http://localhost:3001
