@@ -6,3 +6,4 @@ csv_path = Rails.root.join('db', 'medications_data', 'data.csv')
 
 SeedHelpers::DatabaseCleaner.clean
 MedicationImportService.new(csv_path).import
+FakeDataSeederService.call(doctor_count: 5, patient_count: 10)

@@ -23,10 +23,10 @@
                 <% @prescriptions.each do |prescription| %>
                   <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <%= prescription.patient.full_name %>
+                      <%= prescription.patient.name %>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <%= prescription.doctor.full_name %>
+                      <%= prescription.doctor.name %>
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-900">
                       <ul class="list-disc list-inside">

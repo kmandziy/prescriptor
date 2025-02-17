@@ -1,73 +1,69 @@
 class PrescriptionsController < ApplicationController
-  before_action :set_prescription, only: [:show, :edit, :update, :destroy]
-  before_action :load_associations, only: [:new, :edit, :create]
-
   def index
-    @prescriptions = Prescription.includes(:patient, :doctor, :prescription_items)
-                                  .order(created_at: :desc)
+    resource =Prescriptions::Index.new(index_params)
+    @prescriptions = resource.fetch
   end
 
-  def show; end
+  def show
+    resource = Prescriptions::Show.new(id: params[:id])
+    @prescription = resource.fetch
+  end
 
   def new
     @prescription = Prescription.new
-    @prescription_item = @prescription.prescription_items.build
-  end
-
-  def edit
-    @prescription_item = @prescription.prescription_items.find(params[:id])
+    @prescription.prescription_items.build
+    load_form_dependencies
   end
 
   def create
-    @prescription = Prescription.new(prescription_params)
-
-    if @prescription.save
-      redirect_to @prescription, notice: 'Prescription was successfully created.'
+    resource = Prescriptions::Create.new(prescription_params)
+    
+    if prescription = resource.persist!
+      redirect_to prescription, notice: 'Prescription was successfully created.'
     else
-      load_associations
+      @prescription = Prescription.new(prescription_params)
+      flash.now[:alert] = resource.errors.full_messages
+      load_form_dependencies
       render :new, status: :unprocessable_entity
     end
   end
 
+  def edit
+    resource = Prescriptions::Show.new(id: params[:id])
+    @prescription = resource.fetch
+    load_form_dependencies
+  end
+
   def update
-    if @prescription.update(prescription_params)
-      redirect_to @prescription, notice: 'Prescription was successfully updated.'
+    resource = Prescriptions::Update.new(prescription_params.merge(id: params[:id]))
+    
+    if prescription = resource.persist!
+      redirect_to prescription, notice: 'Prescription was successfully updated.'
     else
-      load_associations
+      @prescription = Prescription.find(params[:id])
+      flash.now[:alert] = resource.errors.full_messages
+      load_form_dependencies
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @prescription.destroy
-    redirect_to prescriptions_url, notice: 'Prescription was successfully deleted.'
+    resource Prescriptions::Destroy.new(id: params[:id])
+    
+    if resource.persist!
+      redirect_to prescriptions_url, notice: 'Prescription was successfully deleted.'
+    else
+      redirect_to prescriptions_url, alert: 'Unable to delete prescription.'
+    end
   end
 
   private
 
-  def set_prescription
-    @prescription = Prescription.includes(:prescription_items).find(params[:id])
-  end
-
-  def load_associations
+  def load_form_dependencies
     @patients = Patient.order(:name)
     @doctors = Doctor.order(:name)
     @medications = Medication.order(:name)
-    
-    # Load dosages based on selected medication if present
-    if params[:prescription] && params[:prescription][:prescription_items_attributes]
-      medication_ids = params[:prescription][:prescription_items_attributes].values.map { |item| item[:medication_id] }.compact
-      if medication_ids.any?
-        @dosages = Dosage.joins(:medication_dosages)
-                        .where(medication_dosages: { medication_id: medication_ids })
-                        .distinct
-                        .order(:frequency)
-      else
-        @dosages = Dosage.order(:frequency)
-      end
-    else
-      @dosages = Dosage.order(:frequency)
-    end
+    @dosages = Dosage.order(:frequency)
   end
 
   def prescription_params
@@ -82,5 +78,9 @@ class PrescriptionsController < ApplicationController
         :_destroy
       ]
     )
+  end
+
+  def index_params
+    params.permit(:page, :per_page)
   end
 end
