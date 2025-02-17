@@ -1,0 +1,39 @@
+<div class="prescription-item sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
+  <%= f.hidden_field :_destroy %>
+  
+  <div class="sm:col-span-3 grid grid-cols-12 gap-4">
+    <div class="col-span-4">
+    <%= f.label :medication_id, class: "block text-sm font-medium text-gray-700" %>
+    <%= f.collection_select :medication_id, Medication.all, :id, :name, 
+        { prompt: "Select medication" },
+        { 
+        class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+        data: { action: "change->prescription-items#loadDosages" }
+        } 
+    %>
+    </div>
+
+    <div class="col-span-3">
+        <%= f.label :dosage_id, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.collection_select :dosage_id, dosages, :id, :frequency_description, 
+          { include_blank: "Select dosage" },
+          { 
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+            data: { 'prescription-items-target': "dosageSelect" }
+          }
+        %>
+    </div>
+
+    <div class="col-span-2">
+      <label class="block text-sm font-medium text-gray-700">&nbsp;</label>
+      <button type="button"
+              data-action="prescription-items#removeItem"
+              class="mt-1 inline-flex items-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+        Remove
+      </button>
+    </div>
+  </div>
+</div>

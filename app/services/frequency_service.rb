@@ -32,7 +32,7 @@ class FrequencyService
     end
 
     def format_weekly_description(weekdays, hours)
-      days = weekdays.map { |d| Date::DAYNAMES[d.to_i] }
+      days = weekdays.flatten.map { |d| Date::DAYNAMES[d] }
       if hours.length == 1
         "Once weekly on #{days.to_sentence}"
       else
