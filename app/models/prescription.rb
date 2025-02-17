@@ -10,8 +10,17 @@ class Prescription < ApplicationRecord
 
   validates :patient_id, presence: true
   validates :doctor_id, presence: true
+  validate :prescription_items_present
 
-  def total_cost
-    prescription_items.sum(&:total_cost)
+  before_save :set_total_cost
+
+  def prescription_items_present
+    return if prescription_items.any?
+
+    errors.add(:prescription_items, "At least one prescription item is required")
+  end
+
+  def set_total_cost
+    self.total_cost = prescription_items.sum(&:cost)
   end
 end

@@ -1,0 +1,31 @@
+<div class="space-y-6 pt-8 sm:space-y-5 sm:pt-10">
+    <div>
+      <h3 class="text-lg font-medium leading-6 text-gray-900">Medications</h3>
+    </div>
+  
+    <div data-controller="prescription-items">
+      <template id="prescription-item-template">
+        <%= f.fields_for :prescription_items, PrescriptionItem.new, child_index: "NEW_RECORD" do |item_form| %>
+          <%= render "prescriptions/prescription_items/item_fields", 
+            f: item_form, 
+            medications: medications, 
+            dosages: dosages %>
+        <% end %>
+      </template>
+  
+      <div data-prescription-items-target="prescriptionItems" class="space-y-6 sm:space-y-5">
+        <%= f.fields_for :prescription_items do |item_form| %>
+          <%= render "prescriptions/prescription_items/item_fields", 
+            f: item_form, 
+            medications: medications, 
+            dosages: dosages %>
+        <% end %>
+      </div>
+  
+      <%= render "prescriptions/form/add_medication_button" %>
+  
+      <div data-prescription-items-target="totalCost" class="mt-4 text-lg font-semibold">
+        Total Cost: $0.00
+      </div>
+    </div>
+</div>

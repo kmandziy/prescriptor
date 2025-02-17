@@ -7,19 +7,8 @@ class PrescriptionItem < ApplicationRecord
   validates :medication_id, uniqueness: { scope: :prescription_id }
   validate :dosage_must_be_available_for_medication
   validate :medication_should_be_present
-  before_validation :set_default_duration, on: :create
 
-  def total_cost
-    daily_doses = case dosage.frequency
-                 when 'once daily' then 1
-                 when 'twice daily' then 2
-                 when 'three times daily' then 3
-                 when 'four times daily' then 4
-                 else 1 # default for 'as needed'
-                 end
-
-    medication.unit_price * daily_doses * duration
-  end
+  after_validation :set_cost
 
   private
 
@@ -35,7 +24,9 @@ class PrescriptionItem < ApplicationRecord
     end
   end
 
-  def set_default_duration
-    self.duration ||= dosage.default_duration.to_i if dosage
+  def set_cost
+    return if medication.blank? || dosage.blank? || duration.blank?
+    
+    self.cost = CalculationsService.total_cost(medication, dosage.frequency, duration)
   end
 end
