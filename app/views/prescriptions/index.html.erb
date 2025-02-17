@@ -1,0 +1,57 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="sm:flex sm:items-center sm:justify-between">
+      <h1 class="text-2xl font-bold text-gray-900">Prescriptions</h1>
+      <%= link_to 'New Prescription', new_prescription_path, 
+          class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700" %>
+    </div>
+  
+    <div class="mt-8 flex flex-col">
+      <div class="overflow-x-auto">
+        <div class="align-middle inline-block min-w-full">
+          <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Medications</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Cost</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <% @prescriptions.each do |prescription| %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <%= prescription.patient.full_name %>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <%= prescription.doctor.full_name %>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900">
+                      <ul class="list-disc list-inside">
+                        <% prescription.medications.each do |medication| %>
+                          <li><%= medication.name %></li>
+                        <% end %>
+                      </ul>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <%= number_to_currency(prescription.total_cost) %>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <%= link_to 'View', prescription_path(prescription), class: "text-indigo-600 hover:text-indigo-900" %>
+                      <%= link_to 'Edit', edit_prescription_path(prescription), class: "ml-3 text-indigo-600 hover:text-indigo-900" %>
+                      <%= button_to 'Delete', prescription_path(prescription), method: :delete, 
+                          class: "ml-3 text-red-600 hover:text-red-900",
+                          data: { confirm: 'Are you sure?' } %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

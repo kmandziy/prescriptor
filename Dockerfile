@@ -17,20 +17,14 @@ RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - \
 # Set working directory
 WORKDIR /prescriptor-app
 
-# Copy Gemfile and install dependencies
-COPY Gemfile Gemfile.lock ./
-RUN bundle install
+# Create directories for volume mounting
+RUN mkdir -p /usr/local/bundle \
+    && mkdir -p /prescriptor-app/tmp \
+    && chmod -R 777 /usr/local/bundle \
+    && chmod -R 777 /prescriptor-app/tmp
 
-# Copy entrypoint.sh and set permissions
-COPY entrypoint.sh /prescriptor-app/
-RUN chmod +x /prescriptor-app/entrypoint.sh
+# Set permissions for the app directory
+RUN chmod -R 777 /prescriptor-app
 
-# Copy the rest of the application
-COPY . .
-
-# Set permissions for the entire app directory
-RUN chown -R root:root /prescriptor-app && \
-    chmod -R 755 /prescriptor-app
-
-# Configure the main process to run when running the image
+# Set default command
 CMD ["rails", "server", "-b", "0.0.0.0"]

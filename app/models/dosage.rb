@@ -6,15 +6,16 @@ class Dosage < ApplicationRecord
   validates :amount, presence: true
   validates :frequency, presence: true
   validates :default_duration, presence: true
+  validate :validate_frequency_format
 
-  # Predefined frequencies
-  FREQUENCIES = [
-    'once daily',
-    'twice daily',
-    'three times daily',
-    'four times daily',
-    'as needed'
-  ]
+  def frequency_description
+    ::FrequencyService.format_description(frequency)
+  end
 
-  validates :frequency, inclusion: { in: FREQUENCIES }
+  private
+
+  def validate_frequency_format
+    validator = FrequencyValidationService.new(frequency)
+    errors.add(:frequency, 'must be a valid cron expression') unless validator.valid?
+  end
 end
