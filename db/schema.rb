@@ -68,6 +68,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_111006) do
     t.bigint "medication_id", null: false
     t.bigint "dosage_id", null: false
     t.integer "duration", null: false
+    t.decimal "cost", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["dosage_id"], name: "index_prescription_items_on_dosage_id"
@@ -79,6 +80,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_111006) do
   create_table "prescriptions", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "doctor_id", null: false
+    t.decimal "total_cost", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["doctor_id"], name: "index_prescriptions_on_doctor_id"

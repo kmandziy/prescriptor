@@ -1,4 +1,5 @@
 class PrescriptionsController < ApplicationController
+  before_action :load_form_dependencies, only: [:new, :edit, :create, :update]
   def index
     resource =Prescriptions::Index.new(index_params)
     @prescriptions = resource.fetch
@@ -12,43 +13,40 @@ class PrescriptionsController < ApplicationController
   def new
     @prescription = Prescription.new
     @prescription.prescription_items.build
-    load_form_dependencies
   end
 
   def create
     resource = Prescriptions::Create.new(prescription_params)
     
-    if prescription = resource.persist!
-      redirect_to prescription, notice: 'Prescription was successfully created.'
-    else
-      @prescription = Prescription.new(prescription_params)
-      flash.now[:alert] = resource.errors.full_messages
-      load_form_dependencies
-      render :new, status: :unprocessable_entity
-    end
+    resource.persist!
+    redirect_to prescriptions_url, notice: 'Prescription was successfully created.'
+  rescue
+    @prescription = resource.prescription
+
+    flash.now[:alert] = resource.prescription.errors.full_messages
+
+    render :new, status: :unprocessable_entity
   end
 
   def edit
     resource = Prescriptions::Show.new(id: params[:id])
     @prescription = resource.fetch
-    load_form_dependencies
   end
 
   def update
     resource = Prescriptions::Update.new(prescription_params.merge(id: params[:id]))
     
-    if prescription = resource.persist!
-      redirect_to prescription, notice: 'Prescription was successfully updated.'
-    else
-      @prescription = Prescription.find(params[:id])
-      flash.now[:alert] = resource.errors.full_messages
-      load_form_dependencies
-      render :edit, status: :unprocessable_entity
-    end
+    resource.persist!
+    redirect_to resource.prescription, notice: 'Prescription was successfully updated.'
+  rescue
+    @prescription = resource.prescription
+    flash.now[:alert] = resource.prescription.errors.full_messages
+    
+    render :edit, status: :unprocessable_entity   
   end
 
   def destroy
-    resource Prescriptions::Destroy.new(id: params[:id])
+    resource = Prescriptions::Destroy.new(id: params[:id])
     
     if resource.persist!
       redirect_to prescriptions_url, notice: 'Prescription was successfully deleted.'

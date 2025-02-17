@@ -30,4 +30,8 @@ class Medication < ApplicationRecord
       )
     end
   end
+
+  def name_with_price
+    "#{name} - $#{format('%.2f', unit_price)}"
+  end
 end
