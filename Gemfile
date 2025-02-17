@@ -16,6 +16,7 @@ gem 'sprockets-rails'
 gem 'stimulus-rails'
 gem 'tailwindcss-rails'
 gem 'turbo-rails'
+gem 'fugit', '~> 1.11.1'
 
 group :development, :test do
   gem 'byebug'
@@ -25,6 +26,10 @@ group :development, :test do
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
+  gem 'shoulda-matchers'
+  gem 'database_cleaner-active_record'
 end
 
 group :development do

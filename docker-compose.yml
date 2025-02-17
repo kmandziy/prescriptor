@@ -8,6 +8,8 @@ services:
       - "3001:3000"
     volumes:
       - .:/prescriptor-app:delegated
+      - bundle_cache:/usr/local/bundle:delegated
+      - tmp_data:/prescriptor-app/tmp:delegated
     command: /prescriptor-app/entrypoint.sh
     environment:
       RAILS_ENV: ${RAILS_ENV:-development}
@@ -32,8 +34,8 @@ services:
     container_name: prescriptor_runner
     volumes:
       - .:/prescriptor-app:delegated
-      - bundle_cache:/usr/local/bundle
-      - tmp_data:/prescriptor-app/tmp
+      - bundle_cache:/usr/local/bundle:delegated
+      - tmp_data:/prescriptor-app/tmp:delegated
     environment:
       RAILS_ENV: ${RAILS_ENV:-development}
       POSTGRES_HOST: db
@@ -44,7 +46,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    entrypoint: ["bundle", "exec"]
+    entrypoint: ["/bin/bash", "-c", "exec \"$@\"", "--"]
     networks:
       - prescriptor_network
     profiles:
@@ -78,8 +80,6 @@ volumes:
     name: prescriptor_bundle_cache
   tmp_data:
     name: prescriptor_tmp_data
-  app:
-    driver: local
 
 networks:
   prescriptor_network:

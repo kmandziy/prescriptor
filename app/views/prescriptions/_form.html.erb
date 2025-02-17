@@ -1,0 +1,106 @@
+<%= form_with(model: prescription, class: "space-y-8 divide-y divide-gray-200") do |f| %>
+  <% if prescription.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4">
+      <div class="flex">
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(prescription.errors.count, "error") %> prohibited this prescription from being saved:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc list-inside">
+              <% prescription.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
+    <div class="space-y-6 sm:space-y-5">
+      <div>
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Prescription Details</h3>
+      </div>
+
+      <div class="space-y-6 sm:space-y-5">
+        <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
+          <%= f.label :patient_id, class: "block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" %>
+          <div class="mt-1 sm:col-span-2 sm:mt-0">
+            <%= f.collection_select :patient_id, @patients, :id, :full_name, 
+                { prompt: "Select a patient" }, 
+                class: "block w-full max-w-lg rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:max-w-xs sm:text-sm" %>
+          </div>
+        </div>
+
+        <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
+          <%= f.label :doctor_id, class: "block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" %>
+          <div class="mt-1 sm:col-span-2 sm:mt-0">
+            <%= f.collection_select :doctor_id, @doctors, :id, :full_name, 
+                { prompt: "Select a doctor" }, 
+                class: "block w-full max-w-lg rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:max-w-xs sm:text-sm" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6 pt-8 sm:space-y-5 sm:pt-10">
+      <div>
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Medications</h3>
+      </div>
+
+      <div class="space-y-6 sm:space-y-5">
+        <%= f.fields_for :prescription_items do |item_form| %>
+          <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
+            <div class="mt-1 sm:col-span-3 sm:mt-0">
+              <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6" data-controller="dosage">
+                <div class="sm:col-span-2">
+                  <%= item_form.label :medication_id, class: "block text-sm font-medium text-gray-700" %>
+                  <%= item_form.collection_select :medication_id, @medications, :id, :name, 
+                    { prompt: "Select medication" },
+                    { 
+                      class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+                      data: { action: "change->dosage#loadDosages" }
+                    } 
+                  %>
+                </div>
+                
+                <div class="sm:col-span-2">
+                  <%= item_form.label :dosage_id, class: "block text-sm font-medium text-gray-700" %>
+                  <%= item_form.collection_select :dosage_id, @dosages, :id, :frequency, 
+                    { include_blank: "Select dosage" },
+                    { 
+                      class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+                      data: { dosage_target: "dosageSelect" }
+                    }
+                  %>
+                </div>
+
+                <div class="sm:col-span-1">
+                  <%= item_form.label :duration, class: "block text-sm font-medium text-gray-700" %>
+                  <%= item_form.number_field :duration, 
+                      class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+                </div>
+
+                <% if item_form.object.persisted? %>
+                  <div class="sm:col-span-1">
+                    <%= item_form.check_box :_destroy %>
+                    <%= item_form.label :_destroy, "Remove", class: "ml-2 text-sm text-gray-700" %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="pt-5">
+    <div class="flex justify-end">
+      <%= link_to "Cancel", prescriptions_path, class: "rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+      <%= f.submit class: "ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+    </div>
+  </div>
+<% end %>
