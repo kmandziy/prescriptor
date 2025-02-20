@@ -11,7 +11,7 @@ gem 'importmap-rails'
 gem 'pg', '~> 1.1'
 gem 'puma', '~> 6.0'
 gem 'rails', '~> 7.1.3'  # Latest stable Rails version
-gem 'redis', '~> 5.0'    # Updated to latest stable Redis
+gem 'redis', '~> 5.4'    # Updated to latest stable Redis
 gem 'sprockets-rails'
 gem 'stimulus-rails'
 gem 'tailwindcss-rails'
